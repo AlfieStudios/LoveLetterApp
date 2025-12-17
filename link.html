@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+  <h1>Enter Their Code</h1>
+
+  <input id="partnerCode" placeholder="CODE">
+  <button id="link">Link</button>
+
+  <script type="module">
+    import { linkWithCode } from "./js/link.js";
+
+    document.getElementById("link").onclick = () => {
+      const code = document.getElementById("partnerCode").value.trim();
+      linkWithCode(code);
+    };
+  </script>
+
+</body>
+</html>
