@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<body>
+  <button id="test">Test Firebase</button>
+
+  <script type="module">
+    import { db } from "./js/firebase.js";
+    import { doc, setDoc } from
+      "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+    document.getElementById("test").onclick = async () => {
+      await setDoc(doc(db, "test", "hello"), {
+        works: true
+      });
+      alert("Firebase works!");
+    };
+  </script>
+</body>
+</html>
