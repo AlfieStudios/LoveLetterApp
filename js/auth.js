@@ -1,9 +1,12 @@
 import { db } from "./firebase.js";
-import { doc, setDoc, getDoc } from
-  "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import {
+  doc,
+  setDoc,
+  getDoc
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 /**
- * Generate an 8-character code
+ * Generate an 8-character code ONCE
  */
 function generateCode() {
   return Math.random()
@@ -13,17 +16,25 @@ function generateCode() {
 }
 
 /**
- * Create a user if one doesn't exist
+ * Create account once, reuse forever
  */
 export async function createUser() {
   let userId = localStorage.getItem("userId");
-  let code = localStorage.getItem("code");
 
-  // If user already exists, stop
-  if (userId && code) return;
+  // Case 1: User already exists → load from DB
+  if (userId) {
+    const userRef = doc(db, "users", userId);
+    const snap = await getDoc(userRef);
 
+    if (snap.exists()) {
+      localStorage.setItem("code", snap.data().code);
+      return;
+    }
+  }
+
+  // Case 2: New user → create account
   userId = crypto.randomUUID();
-  code = generateCode();
+  const code = generateCode();
 
   await setDoc(doc(db, "users", userId), {
     code: code,
