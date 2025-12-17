@@ -1,13 +1,14 @@
-import { db } from "./firebase.js";
+import { auth, db } from "./firebase.js";
+import {
+  signInAnonymously,
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import {
   doc,
   setDoc,
   getDoc
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-/**
- * Generate an 8-character code ONCE
- */
 function generateCode() {
   return Math.random()
     .toString(36)
@@ -16,31 +17,32 @@ function generateCode() {
 }
 
 /**
- * Create account once, reuse forever
+ * Create anonymous account
  */
-export async function createUser() {
-  let userId = localStorage.getItem("userId");
+export async function createAccount() {
+  const result = await signInAnonymously(auth);
+  const uid = result.user.uid;
 
-  // Case 1: User already exists → load from DB
-  if (userId) {
-    const userRef = doc(db, "users", userId);
-    const snap = await getDoc(userRef);
+  const userRef = doc(db, "users", uid);
+  const snap = await getDoc(userRef);
 
-    if (snap.exists()) {
-      localStorage.setItem("code", snap.data().code);
-      return;
-    }
+  if (!snap.exists()) {
+    await setDoc(userRef, {
+      code: generateCode(),
+      linkedWith: null,
+      createdAt: Date.now()
+    });
   }
 
-  // Case 2: New user → create account
-  userId = crypto.randomUUID();
-  const code = generateCode();
+  window.location.href = "dashboard.html";
+}
 
-  await setDoc(doc(db, "users", userId), {
-    code: code,
-    linkedWith: null
+/**
+ * Check login state
+ */
+export function requireAuth(callback) {
+  onAuthStateChanged(auth, user => {
+    if (user) callback(user.uid);
+    else window.location.href = "index.html";
   });
-
-  localStorage.setItem("userId", userId);
-  localStorage.setItem("code", code);
 }
