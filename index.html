@@ -7,41 +7,12 @@
 
   <script type="module">
     import { createAccount } from "./js/auth.js";
-    document.getElementById("create").onclick = createAccount;
-  </script>
 
-</body>
-</html>
-<!DOCTYPE html>
-<html>
-<head>
-  <title>LoveLetter</title>
-</head>
-<body>
-
-  <h1>Your Love Code 💌</h1>
-
-  <p id="code">Loading...</p>
-
-  <button onclick="goLink()">Link With Someone</button>
-
-  <script type="module">
-    import { createUser } from "./js/auth.js";
-
-    const codeEl = document.getElementById("code");
-
-    async function init() {
-      await createUser();
-      codeEl.innerText = localStorage.getItem("code");
-    }
-
-    init();
-
-    window.goLink = () => {
-      window.location.href = "link.html";
+    document.getElementById("create").onclick = () => {
+      console.log("Button clicked");
+      createAccount();
     };
   </script>
 
 </body>
 </html>
-
