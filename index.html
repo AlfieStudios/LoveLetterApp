@@ -1,19 +1,32 @@
 <!DOCTYPE html>
 <html>
+<head>
+  <title>LoveLetter</title>
+</head>
 <body>
-  <button id="test">Test Firebase</button>
+
+  <h1>Your Love Code 💌</h1>
+
+  <p id="code">Loading...</p>
+
+  <button onclick="goLink()">Link With Someone</button>
 
   <script type="module">
-    import { db } from "./js/firebase.js";
-    import { doc, setDoc } from
-      "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { createUser } from "./js/auth.js";
 
-    document.getElementById("test").onclick = async () => {
-      await setDoc(doc(db, "test", "hello"), {
-        works: true
-      });
-      alert("Firebase works!");
+    const codeEl = document.getElementById("code");
+
+    async function init() {
+      await createUser();
+      codeEl.innerText = localStorage.getItem("code");
+    }
+
+    init();
+
+    window.goLink = () => {
+      window.location.href = "link.html";
     };
   </script>
+
 </body>
 </html>
